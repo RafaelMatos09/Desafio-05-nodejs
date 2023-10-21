@@ -52,7 +52,7 @@ const atualizarUsuario = async (req, res) => {
       })
       .returning("*");
 
-    return res.status(201).json(usuario);
+    return res.status(201).json(usuario[0]);
   } catch (error) {
     if (error.code == "23505")
       return res.status(400).json({ mensagem: "Email já existe!" });
