@@ -1,4 +1,4 @@
-const knex = require("../../connection");
+const knex = require("../connection");
 const jwt = require("jsonwebtoken");
 
 const verificaLogin = async (req, res, next) => {

@@ -1,9 +1,9 @@
 const express = require("express");
 const categoria = require("./controladores/categorias");
 const usuario = require("./controladores/usuarios");
-const validarCorpoRequisicao = require("./middlewares/validacoes/validarCorpoRequisicao");
-const schemaUsuario = require("./middlewares/validacoes/cadastroUsuarios");
-const verificaLogin = require("./middlewares/validacoes/login");
+const validarCorpoRequisicao = require("./validacoes/validarCorpoRequisicao");
+const schemaUsuario = require("./schemas/cadastroUsuarios");
+const verificaLogin = require("./middlewares/login");
 const login = require("./controladores/login");
 const rotas = express();
 
