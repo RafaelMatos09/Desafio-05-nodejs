@@ -4,6 +4,7 @@ const usuario = require("./controladores/usuarios");
 const validarCorpoRequisicao = require("./validacoes/validarCorpoRequisicao");
 const schemaUsuario = require("./schemas/cadastroUsuarios");
 const verificaLogin = require("./middlewares/login");
+const postagens = require("./controladores/postagens");
 const login = require("./controladores/login");
 const rotas = express();
 
@@ -23,5 +24,6 @@ rotas.put(
   validarCorpoRequisicao(schemaUsuario),
   usuario.atualizarUsuario
 );
+rotas.post("/postagens", postagens.novaPostagem);
 
 module.exports = rotas;
