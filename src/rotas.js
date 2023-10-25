@@ -25,5 +25,6 @@ rotas.put(
   usuario.atualizarUsuario
 );
 rotas.post("/postagens", postagens.novaPostagem);
+rotas.post("/postagens/:postagemId", postagens.comentar);
 
 module.exports = rotas;
