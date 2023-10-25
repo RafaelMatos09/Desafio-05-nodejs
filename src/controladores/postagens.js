@@ -1,4 +1,4 @@
-const knex = require("knex");
+const knex = require("../connection");
 
 const novaPostagem = async (req, res) => {
   const { id } = req.usuario;
