@@ -26,5 +26,7 @@ rotas.put(
 );
 rotas.post("/postagens", postagens.novaPostagem);
 rotas.post("/postagens/:postagemId", postagens.comentar);
+rotas.get("/postagens", postagens.feed);
+rotas.post("/postagens/:postagemId/curtir", postagens.curtir);
 
 module.exports = rotas;
