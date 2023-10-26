@@ -74,7 +74,10 @@ const feed = async (req, res) => {
 
   const o = offset ? offset : 0;
   try {
-    const postagens = await knex("postagens").limit(10).offset(o);
+    const postagens = await knex("postagens")
+      .where("usuario_id", "!=", id)
+      .limit(10)
+      .offset(o);
 
     if (postagens.length === 0) {
       return res.status(200).json(postagens);
