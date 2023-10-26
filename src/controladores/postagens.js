@@ -76,7 +76,7 @@ const feed = async (req, res) => {
   try {
     const postagens = await knex("postagens").limit(10).offset(o);
 
-    if (postagens.length == 0) {
+    if (postagens.length === 0) {
       return res.status(200).json(postagens);
     }
 
@@ -108,7 +108,7 @@ const feed = async (req, res) => {
         .where({
           postagem_id: postagem.id,
         })
-        .select("usuario.nome", "postagem_comentarios.texto");
+        .select("usuarios.nome", "postagem_comentarios.texto");
       postagem.comentarios = comentarios;
     }
 
