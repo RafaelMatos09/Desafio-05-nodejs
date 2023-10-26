@@ -83,7 +83,7 @@ const feed = async (req, res) => {
       return res.status(200).json(postagens);
     }
 
-    for (let postagem of postagens) {
+    for (const postagem of postagens) {
       const usuario = await knex("usuarios")
         .where({ id: postagem.id })
         .select("nome", "email");
@@ -99,7 +99,7 @@ const feed = async (req, res) => {
           postagem_id: posstagem.id,
         })
         .select("usuario_id");
-      postagem.curtidas = curtidas;
+      postagem.curtidas = curtidas.length;
 
       postagem.curtidoPorMin = curtidas.find((curtida) => {
         return curtida.usuario_id === id;
