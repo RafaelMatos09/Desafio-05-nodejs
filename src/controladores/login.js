@@ -14,8 +14,8 @@ const loginUsuario = async (req, res) => {
       .where({ email: email })
       .first()
       .debug();
-
-    if (usuario.length < 1) {
+    console.log(usuario);
+    if (!usuario) {
       return res.status(400).json("O usuario não foi encontrado");
     }
 
