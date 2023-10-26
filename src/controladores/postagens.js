@@ -85,8 +85,9 @@ const feed = async (req, res) => {
 
     for (const postagem of postagens) {
       const usuario = await knex("usuarios")
-        .where({ id: postagem.id })
-        .select("nome", "email");
+        .where({ id: postagem.usuario_id })
+        .select("nome", "email")
+        .first();
       postagem.usuario = usuario;
 
       const fotos = await knex("postagem_fotos")
