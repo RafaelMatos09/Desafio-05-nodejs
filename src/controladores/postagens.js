@@ -94,7 +94,7 @@ const feed = async (req, res) => {
 
       const curtidas = await knex("postagem_curtidas")
         .where({
-          postagem_id: posstagem.id,
+          postagem_id: postagem.id,
         })
         .select("usuario_id");
       postagem.curtidas = curtidas.length;
