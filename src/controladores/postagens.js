@@ -104,7 +104,7 @@ const feed = async (req, res) => {
       });
 
       const comentarios = await knex("postagem_comentarios")
-        .leftJoin("usuarios", "usuarios.id", "postagem_comentarios.usuario_id")
+        .leftJoin("usuarios", "usuario.id", "postagem_comentarios.usuario_id")
         .where({
           postagem_id: postagem.id,
         })
