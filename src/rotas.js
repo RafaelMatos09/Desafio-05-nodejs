@@ -39,4 +39,9 @@ rotas.post(
   validarCorpoRequisicao(schemaCliente),
   cliente.cadastrarCliente
 );
+rotas.put(
+  "/cliente/:id",
+  validarCorpoRequisicao(schemaCliente),
+  cliente.atualizarCliente
+);
 module.exports = rotas;

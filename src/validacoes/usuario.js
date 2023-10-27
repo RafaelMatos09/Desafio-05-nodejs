@@ -1,19 +1,21 @@
 const knex = require("../connection");
 
-const validaEmail = async (tabela, valor) => {
-  let tipo = typeof valor === "string" ? "email" : "id";
-
+const validaCadastro = async (tabela, tipo, valor, verbo) => {
   const usuario = await knex(tabela).where(tipo, valor).first();
 
   let name = tabela === "usuarios" ? "Usuario" : "Cliente";
-
-  if (usuario) {
-    return `${name} já cadastrado.`;
+  if (verbo === "insert") {
+    if (usuario) {
+      return `${name} já cadastrado.`;
+    }
+  } else if (verbo === "update") {
+    if (!usuario) {
+      return `${name} não encontrado`;
+    }
   }
-
   return false;
 };
 
 module.exports = {
-  validaEmail,
+  validaCadastro,
 };
