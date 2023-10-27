@@ -8,9 +8,14 @@ const verificaLogin = async (req, res, next) => {
     return res.status(401).json("Não autorizado");
   }
 
+  const tokenVazio = authorization.split(" ")[1];
+  console.log(tokenVazio);
+
+  if (!tokenVazio) {
+    return res.status(400).json("Não autorizado");
+  }
   try {
     const token = authorization.replace("Bearer ", "").trim();
-    console.log(token);
 
     const { id } = jwt.verify(token, process.env.SENHA_JWT);
 
