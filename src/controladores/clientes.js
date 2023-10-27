@@ -34,7 +34,6 @@ const cadastrarCliente = async (req, res) => {
 
     return res.status(201).json(cliente[0]);
   } catch (error) {
-    console.log(error.response.headers["x-error-message-id"]);
     return res.status(500).json(error.message);
   }
 };
