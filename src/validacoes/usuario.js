@@ -11,6 +11,8 @@ const validaCadastro = async (tabela, tipo, valor, verbo) => {
   } else if (verbo === "update") {
     if (!usuario) {
       return `${name} não encontrado`;
+    } else {
+      return `${name} já cadastrado`;
     }
   }
   return false;

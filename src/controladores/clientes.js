@@ -34,6 +34,7 @@ const cadastrarCliente = async (req, res) => {
 
     return res.status(201).json(cliente[0]);
   } catch (error) {
+    console.log(error.response.headers["x-error-message-id"]);
     return res.status(500).json(error.message);
   }
 };
@@ -45,9 +46,22 @@ const atualizarCliente = async (req, res) => {
 
   try {
     const clienteExiste = await validaCadastro("clientes", "id", id, "update");
+    const emailExiste = await validaCadastro(
+      "clientes",
+      "email",
+      email,
+      "update"
+    );
+    const cpfExiste = await validaCadastro("clientes", "cpf", cpf, "update");
 
     if (clienteExiste) {
       return res.status(404).json(clienteExiste);
+    }
+    if (emailExiste) {
+      return res.status(400).json(emailExiste);
+    }
+    if (cpfExiste) {
+      return res.status(400).json(emailExiste);
     }
 
     const cliente = await knex("clientes")
