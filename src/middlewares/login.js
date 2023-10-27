@@ -10,6 +10,7 @@ const verificaLogin = async (req, res, next) => {
 
   try {
     const token = authorization.replace("Bearer ", "").trim();
+    console.log(token);
 
     const { id } = jwt.verify(token, process.env.SENHA_JWT);
 
