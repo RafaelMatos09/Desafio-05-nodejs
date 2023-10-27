@@ -61,7 +61,7 @@ const atualizarCliente = async (req, res) => {
       return res.status(400).json(emailExiste);
     }
     if (cpfExiste) {
-      return res.status(400).json(emailExiste);
+      return res.status(400).json(cpfExiste);
     }
 
     const cliente = await knex("clientes")
