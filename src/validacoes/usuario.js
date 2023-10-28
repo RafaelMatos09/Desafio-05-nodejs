@@ -1,7 +1,7 @@
 const knex = require("../connection");
 
 const validaCadastro = async (tabela, tipo, valor, verbo) => {
-  const usuario = await knex(tabela).where(tipo, valor).first();
+  const usuario = await knex(tabela).where(tipo, valor).first().debug();
 
   let name = tabela === "usuarios" ? "Usuario" : "Cliente";
   if (verbo === "insert") {
@@ -11,10 +11,9 @@ const validaCadastro = async (tabela, tipo, valor, verbo) => {
   } else if (verbo === "update") {
     if (!usuario) {
       return `${name} não encontrado`;
-    } else {
-      return `${name} já cadastrado`;
     }
   }
+
   return false;
 };
 

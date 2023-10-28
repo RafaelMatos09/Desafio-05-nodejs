@@ -34,6 +34,9 @@ const cadastrarCliente = async (req, res) => {
 
     return res.status(201).json(cliente[0]);
   } catch (error) {
+    if (error.code === "23505") {
+      return res.status(400).json("Email ou cpf já existe!");
+    }
     return res.status(500).json(error.message);
   }
 };
@@ -45,22 +48,9 @@ const atualizarCliente = async (req, res) => {
 
   try {
     const clienteExiste = await validaCadastro("clientes", "id", id, "update");
-    const emailExiste = await validaCadastro(
-      "clientes",
-      "email",
-      email,
-      "update"
-    );
-    const cpfExiste = await validaCadastro("clientes", "cpf", cpf, "update");
 
     if (clienteExiste) {
       return res.status(404).json(clienteExiste);
-    }
-    if (emailExiste) {
-      return res.status(400).json(emailExiste);
-    }
-    if (cpfExiste) {
-      return res.status(400).json(cpfExiste);
     }
 
     const cliente = await knex("clientes")
@@ -80,6 +70,9 @@ const atualizarCliente = async (req, res) => {
 
     return res.status(201).json(cliente[0]);
   } catch (error) {
+    if (error.code === "23505") {
+      return res.status(400).json("Email ou cpf já existe!");
+    }
     return res.status(500).json(error.message);
   }
 };
