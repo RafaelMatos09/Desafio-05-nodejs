@@ -14,8 +14,14 @@ const cadastrarCliente = async (req, res) => {
       "insert"
     );
 
+    const cpfExiste = await validaCadastro("clientes", "cpf", cpf, "insert");
+
     if (emailExiste) {
       return res.status(404).json(emailExiste);
+    }
+
+    if (cpfExiste) {
+      return res.status(404).json(cpfExiste);
     }
 
     const cliente = await knex("clientes")
