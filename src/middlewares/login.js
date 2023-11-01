@@ -30,6 +30,12 @@ const verificaLogin = async (req, res, next) => {
 
     next();
   } catch (error) {
+    if (
+      error.message === "invalid signature" ||
+      error.message === "jwt malformed"
+    ) {
+      return res.status(400).json({ mensagem: "Não autorizado" });
+    }
     return res.status(400).json(error.message);
   }
 };

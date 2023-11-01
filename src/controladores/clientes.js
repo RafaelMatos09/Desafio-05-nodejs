@@ -1,6 +1,6 @@
 const knex = require("../connection");
 const bcrypt = require("bcrypt");
-const { validaCadastro } = require("../validacoes/usuario");
+const { validaCadastro } = require("../validacoes/cadastro");
 
 const cadastrarCliente = async (req, res) => {
   const { nome, email, cpf, cep, rua, numero, bairro, cidade, estado } =
@@ -83,7 +83,37 @@ const atualizarCliente = async (req, res) => {
   }
 };
 
+const listarClientes = async (req, res) => {
+  try {
+    const clientes = await knex("clientes").returning("*");
+
+    return res.status(200).json(clientes);
+  } catch (error) {
+    return res.status(500).json(error.message);
+  }
+};
+
+const detalharClientes = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const clienteExiste = await validaCadastro("clientes", "id", id, "select");
+
+    if (clienteExiste) {
+      return res.status(404).json(clienteExiste);
+    }
+
+    const cliente = await knex("clientes").where({ id }).returning("*");
+
+    return res.status(200).json(cliente);
+  } catch (error) {
+    return res.status(500).json(error.message);
+  }
+};
+
 module.exports = {
   cadastrarCliente,
   atualizarCliente,
+  listarClientes,
+  detalharClientes,
 };
