@@ -2,7 +2,8 @@ const knex = require("../connection");
 const { validaCadastro } = require("../validacoes/cadastro");
 
 const cadastrarProduto = async (req, res) => {
-  const { descricao, quantidade_estoque, valor, categoria_id } = req.body;
+  const { descricao, quantidade_estoque, valor, produto_imagem, categoria_id } =
+    req.body;
 
   try {
     const categoriaExiste = await validaCadastro(
@@ -21,6 +22,7 @@ const cadastrarProduto = async (req, res) => {
         descricao,
         quantidade_estoque,
         valor,
+        produto_imagem,
         categoria_id,
       })
       .returning("*");
@@ -129,6 +131,8 @@ const deletarProduto = async (req, res) => {
     if (produtoExiste) {
       return res.status(404).json(produtoExiste);
     }
+    validaProduto = await knex("pedidos").where({ cliente_id: id }).first();
+    console.log(validaProduto);
     const produto = await knex("produtos").where({ id }).del().returning("*");
 
     const produtoDetalhar = {

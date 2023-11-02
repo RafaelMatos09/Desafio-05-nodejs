@@ -1,7 +1,7 @@
 const knex = require("../connection");
 
 const validaCadastro = async (tabela, tipo, valor, verbo) => {
-  const cadastro = await knex(tabela).where(tipo, valor).returning("*").debug();
+  const cadastro = await knex(tabela).where(tipo, valor).returning("*");
 
   const tabelaNomes = {
     usuarios: "Usuario",

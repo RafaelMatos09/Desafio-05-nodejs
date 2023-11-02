@@ -15,6 +15,10 @@ const schemaProduto = joi.object({
     "number.base": "A categoria deve ser um número",
     "number.integer": "A categoria deve ser um número inteiro",
   }),
+  produto_imagem: joi.string().required().messages({
+    "any.required": "O campo imagem_produto é obrigatório",
+    "string.empty": "O campo imagem_produto não pode estar vazio",
+  }),
   quantidade_estoque: joi.number().integer().required().messages({
     "any.required": "O campo quantidade é obrigatório",
     "number.base": "A quantidade deve ser um número",

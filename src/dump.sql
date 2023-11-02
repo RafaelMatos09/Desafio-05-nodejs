@@ -42,8 +42,24 @@ create table postagem_curtidas (
   descricao text not null,
   quantidade_estoque int,
   valor int not null,
+  produto_imagem text not null,
   categoria_id int references categorias(id)
  );
+
+ create table pedidos (
+  id serial primary key,
+  cliente_id int not null references clientes(id),
+  observacao text not null,
+  valor_total int not null
+  );
+
+  create table pedido_produtos(
+  id serial primary key,
+  pedido_id integer references pedidos(id),
+  produto_id integer references produtos(id),
+  quantidade_produto integer not null,
+  valor_produto integer not null
+  );
 
  create table clientes (
   id serial primary key,
