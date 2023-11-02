@@ -1,4 +1,5 @@
 const knex = require("../connection");
+const enviarEmail = require("../servicos/nodemailer");
 const { validaCadastro } = require("../validacoes/cadastro");
 
 const cadastrarPedido = async (req, res) => {
@@ -15,6 +16,10 @@ const cadastrarPedido = async (req, res) => {
     if (clienteExiste) {
       return res.status(404).json(clienteExiste);
     }
+
+    const clienteEmail = await knex("clientes")
+      .where({ id: cliente_id })
+      .returning("email");
 
     for (const pedidoProduto of pedido_produtos) {
       const produtoExiste = await validaCadastro(
@@ -80,6 +85,13 @@ const cadastrarPedido = async (req, res) => {
         .update({ valor_total: valorTotalPedido });
 
       await transaction.commit();
+
+      await enviarEmail(clienteEmail[0].email, {
+        cliente_id,
+        observacao,
+        pedido_produtos,
+        valor_total: valorTotalPedido,
+      });
 
       return res
         .status(201)
