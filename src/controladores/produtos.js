@@ -36,7 +36,8 @@ const cadastrarProduto = async (req, res) => {
 
 const atualizarProduto = async (req, res) => {
   const { id } = req.params;
-  const { descricao, quantidade_estoque, valor, categoria_id } = req.body;
+  const { descricao, quantidade_estoque, valor, produto_imagem, categoria_id } =
+    req.body;
 
   try {
     const produtoExiste = await validaCadastro("produtos", "id", id, "update");
@@ -59,6 +60,7 @@ const atualizarProduto = async (req, res) => {
         descricao,
         quantidade_estoque,
         valor,
+        produto_imagem,
         categoria_id,
       })
       .returning("*");
