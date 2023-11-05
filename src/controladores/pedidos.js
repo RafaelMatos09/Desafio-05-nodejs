@@ -106,6 +106,13 @@ const cadastrarPedido = async (req, res) => {
   }
 };
 
+const listarPedidos = async (req, res) => {
+  const { cliente_id } = req.query;
+
+  try {
+  } catch (error) {}
+};
+
 module.exports = {
   cadastrarPedido,
 };
