@@ -133,8 +133,15 @@ const deletarProduto = async (req, res) => {
     if (produtoExiste) {
       return res.status(404).json(produtoExiste);
     }
-    validaProduto = await knex("pedidos").where({ cliente_id: id }).first();
-    console.log(validaProduto);
+    const validaProduto = await knex("pedido_produtos")
+      .where({ produto_id: id })
+      .first();
+
+    if (validaProduto) {
+      return res.status(400).json({
+        mensagem: "Produto não pode ser deletado, está vinculado a um pedido!",
+      });
+    }
     const produto = await knex("produtos").where({ id }).del().returning("*");
 
     const produtoDetalhar = {
@@ -143,6 +150,12 @@ const deletarProduto = async (req, res) => {
     };
     return res.status(200).json(produtoDetalhar);
   } catch (error) {
+    if (error.code === "23503") {
+      return res.status(400).json({
+        mensagem:
+          "Produto não pode ser deletado, está vinculado a um pedido! [i]",
+      });
+    }
     return res.status(500).json({ mensagem: "Erro interno do servidor!" });
   }
 };
