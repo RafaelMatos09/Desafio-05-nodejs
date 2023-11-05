@@ -14,7 +14,7 @@ const {
   verificaParametroId,
   verificaQueryId,
 } = require("./middlewares/filtroParams");
-const { cadastrarPedido } = require("./controladores/pedidos");
+const { cadastrarPedido, listarPedidos } = require("./controladores/pedidos");
 const schemaPedido = require("./schemas/cadastroPedidos");
 const rotas = express();
 
@@ -75,6 +75,8 @@ rotas.get("/produto/:id", verificaParametroId, produto.detalharProduto);
 rotas.delete("/produto/:id", verificaParametroId, produto.deletarProduto);
 rotas.get("/cliente", cliente.listarClientes);
 rotas.get("/cliente/:id", verificaParametroId, cliente.detalharClientes);
-rotas.post("/pedido", validarCorpoRequisicao(schemaPedido), cadastrarPedido);
 
+//pedidos
+rotas.post("/pedido", validarCorpoRequisicao(schemaPedido), cadastrarPedido);
+rotas.get("/pedido", verificaQueryId, listarPedidos);
 module.exports = rotas;

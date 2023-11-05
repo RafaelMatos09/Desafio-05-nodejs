@@ -110,9 +110,95 @@ const listarPedidos = async (req, res) => {
   const { cliente_id } = req.query;
 
   try {
-  } catch (error) {}
+    const clienteExiste = await validaCadastro(
+      "clientes",
+      "id",
+      cliente_id,
+      "select"
+    );
+
+    if (clienteExiste) {
+      return res.status(404).json(clienteExiste);
+    }
+
+    let pedidos = [];
+
+    if (cliente_id) {
+      pedidos = await knex
+        .select(
+          "p.id",
+          "p.valor_total",
+          "p.observacao",
+          "p.cliente_id",
+          "pp.id as pp_id",
+          "pp.quantidade_produto",
+          "pp.valor_produto",
+          "pp.pedido_id",
+          "pp.produto_id"
+        )
+        .from("pedidos as p")
+        .join("pedido_produtos as pp", "pp.pedido_id", "p.id")
+        .where("p.cliente_id", cliente_id);
+    } else {
+      pedidos = await knex
+        .select(
+          "p.id",
+          "p.valor_total",
+          "p.observacao",
+          "p.cliente_id",
+          "pp.id as pp_id",
+          "pp.quantidade_produto",
+          "pp.valor_produto",
+          "pp.pedido_id",
+          "pp.produto_id"
+        )
+        .from("pedidos as p")
+        .join("pedido_produtos as pp", "pp.pedido_id", "p.id");
+    }
+
+    const detalharPedido = pedidos.reduce((accumulator, row) => {
+      const existePedido = accumulator.find(
+        (item) => item.pedido.id === row.id
+      );
+
+      if (existePedido) {
+        existePedido.pedido_produtos.push({
+          id: row.pp_id,
+          quantidade_produto: row.quantidade_produto,
+          valor_produto: row.valor_produto,
+          pedido_id: row.pedido_id,
+          produto_id: row.produto_id,
+        });
+      } else {
+        accumulator.push({
+          pedido: {
+            id: row.id,
+            valor_total: row.valor_total,
+            observacao: row.observacao,
+            cliente_id: row.cliente_id,
+          },
+          pedido_produtos: [
+            {
+              id: row.pp_id,
+              quantidade_produto: row.quantidade_produto,
+              valor_produto: row.valor_produto,
+              pedido_id: row.pedido_id,
+              produto_id: row.produto_id,
+            },
+          ],
+        });
+      }
+
+      return accumulator;
+    }, []);
+
+    return res.status(200).json(detalharPedido);
+  } catch (error) {
+    return res.status(500).json(error.message);
+  }
 };
 
 module.exports = {
   cadastrarPedido,
+  listarPedidos,
 };
