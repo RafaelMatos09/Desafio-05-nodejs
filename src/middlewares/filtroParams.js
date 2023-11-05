@@ -8,12 +8,19 @@ const verificaParametroId = async (req, res, next) => {
 };
 
 const verificaQueryId = async (req, res, next) => {
-  const { categoria_id } = req.query;
+  const { categoria_id, cliente_id } = req.query;
+
   if (categoria_id) {
     if (isNaN(categoria_id)) {
       return res.status(400).json({ mensagem: "Id informado inválido" });
     }
   }
+  if (cliente_id) {
+    if (isNaN(cliente_id)) {
+      return res.status(400).json({ mensagem: "Id informado inválido" });
+    }
+  }
+
   next();
 };
 
