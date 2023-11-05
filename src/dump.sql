@@ -42,7 +42,7 @@ create table postagem_curtidas (
   descricao text not null,
   quantidade_estoque int,
   valor int not null,
-  produto_imagem text not null,
+  produto_imagem text,
   categoria_id int references categorias(id)
  );
 

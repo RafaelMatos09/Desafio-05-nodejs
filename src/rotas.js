@@ -16,6 +16,7 @@ const {
 } = require("./middlewares/filtroParams");
 const { cadastrarPedido, listarPedidos } = require("./controladores/pedidos");
 const schemaPedido = require("./schemas/cadastroPedidos");
+const multer = require("./middlewares/multer");
 const rotas = express();
 
 rotas.get("/categoria", categoria.listar);
@@ -59,15 +60,11 @@ rotas.put(
 );
 
 //produtos
-rotas.post(
-  "/produto",
-  validarCorpoRequisicao(schemaProduto),
-  produto.cadastrarProduto
-);
+rotas.post("/produto", multer.single("imagem"), produto.cadastrarProduto);
 rotas.put(
   "/produto/:id",
   verificaParametroId,
-  validarCorpoRequisicao(schemaProduto),
+  multer.single("imagem"),
   produto.atualizarProduto
 );
 rotas.get("/produto", verificaQueryId, produto.listarProdutos);
