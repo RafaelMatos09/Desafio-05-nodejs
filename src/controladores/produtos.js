@@ -1,11 +1,9 @@
 const knex = require("../connection");
 const { validaCadastro } = require("../validacoes/cadastro");
-const { uploadImagem } = require("../servicos/uploads");
+const { uploadImagem, excluirImagem } = require("../servicos/uploads");
 
 const cadastrarProduto = async (req, res) => {
-  const { descricao, quantidade_estoque, valor, produto_imagem, categoria_id } =
-    req.body;
-  const { originalname, mimetype, buffer } = req.file;
+  const { descricao, quantidade_estoque, valor, categoria_id } = req.body;
 
   console.log(req.body);
 
@@ -43,30 +41,32 @@ const cadastrarProduto = async (req, res) => {
       return res.status(404).json(categoriaExiste);
     }
 
-    let produto = await knex("produtos")
-      .insert({
-        descricao,
-        quantidade_estoque,
-        valor,
-        produto_imagem,
-        categoria_id,
-      })
-      .returning("*");
+    const produtoData = {
+      descricao,
+      quantidade_estoque,
+      valor,
+      categoria_id,
+    };
 
-    const imagem = await uploadImagem(
-      `produtos/${produto[0].id}/${originalname}`,
-      buffer,
-      mimetype
-    );
+    const produto = await knex("produtos").insert(produtoData).returning("*");
 
-    produto = await knex("produtos")
-      .update({
-        produto_imagem: imagem.path,
-      })
-      .where({ id: produto[0].id })
-      .returning("*");
+    if (req.file) {
+      const { originalname, mimetype, buffer } = req.file;
 
-    produto[0].produto_imagem = imagem.url;
+      const imagem = await uploadImagem(
+        `produtos/${produto[0].id}/${originalname}`,
+        buffer,
+        mimetype
+      );
+      console.log(imagem.url);
+      const urlDoBucket = imagem.url;
+
+      await knex("produtos")
+        .where("id", produto[0].id)
+        .update({ produto_imagem: urlDoBucket });
+
+      produto[0].produto_imagem = urlDoBucket;
+    }
 
     return res.status(201).json(produto[0]);
   } catch (error) {
@@ -76,10 +76,10 @@ const cadastrarProduto = async (req, res) => {
 };
 
 const atualizarProduto = async (req, res) => {
-  const { id } = req.params;
-  const { descricao, quantidade_estoque, valor, produto_imagem, categoria_id } =
-    req.body;
-  const { originalname, mimetype, buffer } = req.file;
+  const { descricao, quantidade_estoque, valor, categoria_id } = req.body;
+  const produtoId = req.params.id; // Suponhamos que você obtenha o ID do produto a partir dos parâmetros da rota.
+
+  console.log(req.body);
 
   if (!descricao || typeof descricao !== "string" || descricao.trim() === "") {
     return res.status(400).json({ mensagem: "A descrição é inválida." });
@@ -104,33 +104,54 @@ const atualizarProduto = async (req, res) => {
   }
 
   try {
-    const produtoExiste = await validaCadastro("produtos", "id", id, "update");
     const categoriaExiste = await validaCadastro(
       "categorias",
       "id",
       categoria_id,
-      "insert"
+      "update"
     );
-    if (produtoExiste) {
-      return res.status(404).json(produtoExiste);
-    }
+
     if (categoriaExiste) {
       return res.status(404).json(categoriaExiste);
     }
 
+    let produtoData = {
+      descricao,
+      quantidade_estoque,
+      valor,
+      categoria_id,
+    };
+
+    let imagem;
+
+    if (req.file) {
+      const { originalname, mimetype, buffer } = req.file;
+
+      imagem = await uploadImagem(
+        `produtos/${produtoId}/${originalname}`,
+        buffer,
+        mimetype
+      );
+
+      produtoData.produto_imagem = imagem.path;
+    }
+
     const produto = await knex("produtos")
-      .where({ id })
-      .update({
-        descricao,
-        quantidade_estoque,
-        valor,
-        produto_imagem,
-        categoria_id,
-      })
+      .where({ id: produtoId })
+      .update(produtoData)
       .returning("*");
 
-    return res.status(201).json(produto[0]);
+    if (req.file && produto.length > 0) {
+      if (produto[0].produto_imagem) {
+        const imagemAntigaPath = produto[0].produto_imagem;
+        await excluirImagem(imagemAntigaPath);
+      }
+      produto[0].produto_imagem = imagem.url;
+    }
+
+    return res.status(200).json(produto[0]);
   } catch (error) {
+    console.log(error.message);
     return res.status(500).json({ mensagem: "Erro interno do servidor!" });
   }
 };
@@ -207,6 +228,8 @@ const deletarProduto = async (req, res) => {
       });
     }
     const produto = await knex("produtos").where({ id }).del().returning("*");
+
+    await excluirImagem(produto[0].produto_imagem);
 
     const produtoDetalhar = {
       produto,
