@@ -77,7 +77,7 @@ const cadastrarProduto = async (req, res) => {
 
 const atualizarProduto = async (req, res) => {
   const { descricao, quantidade_estoque, valor, categoria_id } = req.body;
-  const produtoId = req.params.id; // Suponhamos que você obtenha o ID do produto a partir dos parâmetros da rota.
+  const produtoId = req.params.id;
 
   console.log(req.body);
 
