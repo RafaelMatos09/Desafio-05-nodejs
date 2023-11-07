@@ -36,7 +36,7 @@ const cadastrarProduto = async (req, res) => {
         buffer,
         mimetype
       );
-      console.log(imagem.url);
+
       const urlDoBucket = imagem.url;
 
       await knex("produtos")
@@ -56,9 +56,6 @@ const cadastrarProduto = async (req, res) => {
 const atualizarProduto = async (req, res) => {
   const { descricao, quantidade_estoque, valor, categoria_id } = req.body;
   const produtoId = req.params.id;
-
-  console.log(req.body);
-
   try {
     const categoriaExiste = await validaCadastro(
       "categorias",
@@ -67,8 +64,19 @@ const atualizarProduto = async (req, res) => {
       "update"
     );
 
+    const produtoExiste = await validaCadastro(
+      "produtos",
+      "id",
+      produtoId,
+      "update"
+    );
+
     if (categoriaExiste) {
       return res.status(404).json(categoriaExiste);
+    }
+
+    if (produtoExiste) {
+      return res.status(404).json(produtoExiste);
     }
 
     let produtoData = {
@@ -89,21 +97,29 @@ const atualizarProduto = async (req, res) => {
         mimetype
       );
 
-      produtoData.produto_imagem = imagem.path;
+      produtoData.produto_imagem = imagem.url;
     }
+
+    const produto_antigo = await knex("produtos")
+      .select("produto_imagem")
+      .first();
 
     const produto = await knex("produtos")
       .where({ id: produtoId })
       .update(produtoData)
       .returning("*");
 
-    if (req.file && produto.length > 0) {
-      if (produto[0].produto_imagem) {
-        const imagemAntigaPath = produto[0].produto_imagem;
-        await excluirImagem(imagemAntigaPath);
+    if (req.file) {
+      if (produto_antigo.produto_imagem) {
+        let path_imagem = produto_antigo.produto_imagem.replace(
+          "https://desafio-05-cubos.s3.us-east-005.backblazeb2.com/",
+          ""
+        );
+
+        await excluirImagem(path_imagem);
       }
       produto[0].produto_imagem = imagem.url;
-    } //teria que criar mais um campo para armazenar o path do bucket para excluir a imagem
+    }
 
     return res.status(200).json(produto[0]);
   } catch (error) {
@@ -185,7 +201,12 @@ const deletarProduto = async (req, res) => {
     }
     const produto = await knex("produtos").where({ id }).del().returning("*");
 
-    await excluirImagem(produto[0].produto_imagem);
+    await excluirImagem(
+      produto[0].produto_imagem.replace(
+        "https://desafio-05-cubos.s3.us-east-005.backblazeb2.com/",
+        ""
+      )
+    );
 
     const produtoDetalhar = {
       produto,
