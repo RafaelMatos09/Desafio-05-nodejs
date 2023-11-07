@@ -108,22 +108,24 @@ const cadastrarPedido = async (req, res) => {
 
 const listarPedidos = async (req, res) => {
   const { cliente_id } = req.query;
-
+  console.log(cliente_id);
   try {
-    const clienteExiste = await validaCadastro(
-      "clientes",
-      "id",
-      cliente_id,
-      "select"
-    );
+    if (cliente_id != undefined) {
+      const clienteExiste = await validaCadastro(
+        "clientes",
+        "id",
+        cliente_id,
+        "select"
+      );
 
-    if (clienteExiste) {
-      return res.status(404).json(clienteExiste);
+      if (clienteExiste) {
+        return res.status(404).json(clienteExiste);
+      }
     }
 
     let pedidos = [];
 
-    if (cliente_id) {
+    if (cliente_id !== undefined) {
       pedidos = await knex
         .select(
           "p.id",

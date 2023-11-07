@@ -147,7 +147,7 @@ const atualizarProduto = async (req, res) => {
         await excluirImagem(imagemAntigaPath);
       }
       produto[0].produto_imagem = imagem.url;
-    }
+    } //teria que criar mais um campo para armazenar o path do bucket para excluir a imagem
 
     return res.status(200).json(produto[0]);
   } catch (error) {
