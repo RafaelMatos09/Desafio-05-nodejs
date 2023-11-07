@@ -60,11 +60,17 @@ rotas.put(
 );
 
 //produtos
-rotas.post("/produto", multer.single("imagem"), produto.cadastrarProduto);
+rotas.post(
+  "/produto",
+  multer.single("imagem"),
+  validarCorpoRequisicao(schemaProduto),
+  produto.cadastrarProduto
+);
 rotas.put(
   "/produto/:id",
   verificaParametroId,
   multer.single("imagem"),
+  validarCorpoRequisicao(schemaProduto),
   produto.atualizarProduto
 );
 rotas.get("/produto", verificaQueryId, produto.listarProdutos);

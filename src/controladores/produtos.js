@@ -7,28 +7,6 @@ const cadastrarProduto = async (req, res) => {
 
   console.log(req.body);
 
-  if (!descricao || typeof descricao !== "string" || descricao.trim() === "") {
-    return res.status(400).json({ mensagem: "A descrição é inválida." });
-  }
-
-  if (
-    !quantidade_estoque ||
-    isNaN(quantidade_estoque) ||
-    quantidade_estoque < 0
-  ) {
-    return res
-      .status(400)
-      .json({ mensagem: "A quantidade em estoque é inválida." });
-  }
-
-  if (!valor || isNaN(valor) || valor < 0) {
-    return res.status(400).json({ mensagem: "O valor é inválido." });
-  }
-
-  if (!categoria_id || isNaN(categoria_id) || categoria_id < 1) {
-    return res.status(400).json({ mensagem: "A categoria é inválida." });
-  }
-
   try {
     const categoriaExiste = await validaCadastro(
       "categorias",
@@ -80,28 +58,6 @@ const atualizarProduto = async (req, res) => {
   const produtoId = req.params.id;
 
   console.log(req.body);
-
-  if (!descricao || typeof descricao !== "string" || descricao.trim() === "") {
-    return res.status(400).json({ mensagem: "A descrição é inválida." });
-  }
-
-  if (
-    !quantidade_estoque ||
-    isNaN(quantidade_estoque) ||
-    quantidade_estoque < 0
-  ) {
-    return res
-      .status(400)
-      .json({ mensagem: "A quantidade em estoque é inválida." });
-  }
-
-  if (!valor || isNaN(valor) || valor < 0) {
-    return res.status(400).json({ mensagem: "O valor é inválido." });
-  }
-
-  if (!categoria_id || isNaN(categoria_id) || categoria_id < 1) {
-    return res.status(400).json({ mensagem: "A categoria é inválida." });
-  }
 
   try {
     const categoriaExiste = await validaCadastro(
